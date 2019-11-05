@@ -11,14 +11,20 @@ const rollingHash = new PolynomialHash();
 * @returns {object}
 */
 const getDistances = (text, shingleSize) => {
-  let distances = {};
+  const distances = {};
+  // tracks which shingles have already been tested and can be skipped
+  const shinglesTested = {};
   // shingles cannot overlap, so the last possible match would be the last 2 * shingleSize characters of `ciphertext`
   for(let matchIndex = 0; matchIndex <= text.length - 2 * shingleSize; matchIndex++) {
     // the shingle we are attempting to match with this iteration
     const matchStr = text.substring(matchIndex, matchIndex + shingleSize);
-    const matchHash = rollingHash.hash(matchStr);
+
+    // if we've seen it before, it's already been counted in `distances`; skip it
+    if(shinglesTested[matchStr]) continue;
+    else shinglesTested[matchStr] = true;
 
     // use rolling hashing to find distances between matches of `matchStr`
+    const matchHash = rollingHash.hash(matchStr);
     let lastStr = null, lastHash = null, lastMatchIndex = matchIndex;
     for(let strIndex = matchIndex + shingleSize; strIndex <= text.length - shingleSize; strIndex++) {
       const currentStr = text.substring(strIndex, strIndex + shingleSize)
@@ -38,6 +44,7 @@ const getDistances = (text, shingleSize) => {
         const distance = strIndex - lastMatchIndex;
         if(!distances[distance]) distances[distance] = 0;
         distances[distance]++;
+        lastMatchIndex = strIndex;
       }
 
       lastStr = currentStr;
