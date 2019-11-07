@@ -1,4 +1,5 @@
 import PolynomialHash from "./PolynomialHash";
+import "./types";
 
 const rollingHash = new PolynomialHash();
  
@@ -60,12 +61,12 @@ const getDistances = (text, shingleSize) => {
  * 
  *  For some number `n`, let `A_n` be all multiples of `n` in `distances`.
  *  Let `s_n` be the sum of `distances[a]` for all `a` in `A_n`.
- *  Let `average_n` be `s / |A|`.
+ *  Let `average_n` be `s_n / |A_n|`.
  * 
  *  Let the most common denominator be the maximum value in `{ average_n | n` is a key of `distances }`
  * 
  * @param {object} distances Hash table of distance frequencies, as returned in `getDistances`
- * @returns {number}
+ * @returns {MostCommonDenominator} The most common denominator (weighted)
  */
 const mostCommonDenominator = (distances) => {
 
@@ -82,13 +83,14 @@ const mostCommonDenominator = (distances) => {
  */
 const getKeyLength = (ciphertext, shingleMin, shingleMax) => {
   // TODO: in the future, allow returning multiple possible key lengths
-  let bestDenom = { value: 0, avg: 0 };
+  /** @type {MostCommonDenominator} */
+  let bestDenom = { denom: 0, avg: 0 };
   for(let shingleSize = shingleMin; shingleSize <= shingleMax; shingleSize++) {
     const distances = getDistances(ciphertext, shingleSize);
-    // let denom = mostCommonDenominator(distances)
-    // if(denom.sum > bestDenom.sum) bestDenom = denom
+    let denom = mostCommonDenominator(distances);
+    if(denom.avg > bestDenom.avg) bestDenom = denom;
   }
-  return [bestDenom.value];
+  return [bestDenom.denom];
 }
 
 export { getKeyLength, mostCommonDenominator, getDistances };
