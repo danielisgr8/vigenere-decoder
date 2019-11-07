@@ -83,6 +83,7 @@ const mostCommonDenominator = (distances) => {
  */
 const getKeyLength = (ciphertext, shingleMin, shingleMax) => {
   // TODO: in the future, allow returning multiple possible key lengths
+  // TODO: use previous distances to help find matches in future `getDistances` calls (future distances are "subsets" of past distances)
   /** @type {MostCommonDenominator} */
   let bestDenom = { denom: 0, avg: 0 };
   for(let shingleSize = shingleMin; shingleSize <= shingleMax; shingleSize++) {
