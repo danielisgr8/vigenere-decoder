@@ -1,4 +1,5 @@
 import PolynomialHash from "./PolynomialHash";
+import "./types";
 
 const rollingHash = new PolynomialHash();
  
@@ -40,7 +41,7 @@ const getDistances = (text, shingleSize) => {
 
       // hash can have collisions, so we must also check for equality
       if(matchHash === currentHash &&
-          currentStr === matchStr) {
+         currentStr === matchStr) {
         const distance = strIndex - lastMatchIndex;
         if(!distances[distance]) distances[distance] = 0;
         distances[distance]++;
@@ -60,15 +61,62 @@ const getDistances = (text, shingleSize) => {
  * 
  *  For some number `n`, let `A_n` be all multiples of `n` in `distances`.
  *  Let `s_n` be the sum of `distances[a]` for all `a` in `A_n`.
- *  Let `average_n` be `s / |A|`.
+ *  Let `average_n` be `s_n / |A_n|`.
  * 
  *  Let the most common denominator be the maximum value in `{ average_n | n` is a key of `distances }`
  * 
  * @param {object} distances Hash table of distance frequencies, as returned in `getDistances`
- * @returns {number}
+ * @returns {MostCommonDenominator} The most common denominator (weighted)
  */
 const mostCommonDenominator = (distances) => {
+  const sortedKeys = Object.keys(distances).sort();
+  // maps keys from `sortedKeys` to an object storing the current sum of occurrences from multiples (sum)
+  //  and how many multiples have been encountered (count)
+  const values = {};
 
+  for(let currentIndex = sortedKeys.length - 1; currentIndex >= 0; currentIndex--) {
+    const current = sortedKeys[currentIndex];
+
+    if(!values[current]) values[current] = { sum: 0, count: 0 };
+    values[current].sum += distances[current];
+    values[current].count++;
+
+    /*
+      Attempt to find the largest denominator of `current`.
+      If found, update its sum and count.
+
+      By only finding the largest denominator, sums will "avalanche" down.
+      For a given `current`, `values[current].sum` at this point will always be
+        the sum of it and all its multiples' frequencies.
+      Therefore, the sum of frequencies of the largest denominator of `current` is simply
+        `values[current].sum` plus the largest denominator's frequency (which is added at the
+        beginning of its iteration of the for loop).
+    */
+    for(let nextIndex = currentIndex - 1; nextIndex >= 0; nextIndex--) {
+      const next = sortedKeys[nextIndex];
+
+      if(current % next === 0) {
+        if(!values[next]) values[next] = { sum: 0, count: 0 };
+        values[next].sum += values[current].sum;
+        values[next].count += values[current].count;
+
+        break;
+      }
+    }
+  }
+
+  // now find the best weighted denominator, where a weighted denominator is
+  //  its `sum` divided by its `count`
+  const bestWeighted = { denom: 0, avg: 0 }
+  sortedKeys.forEach((key) => {
+    const avg = values[key].sum / values[key].count;
+    if(avg > bestWeighted.avg) {
+      bestWeighted.denom = Number(key);
+      bestWeighted.avg = avg;
+    }
+  });
+
+  return bestWeighted;
 }
 
 /**
@@ -82,13 +130,15 @@ const mostCommonDenominator = (distances) => {
  */
 const getKeyLength = (ciphertext, shingleMin, shingleMax) => {
   // TODO: in the future, allow returning multiple possible key lengths
-  let bestDenom = { value: 0, avg: 0 };
+  // TODO: use previous distances to help find matches in future `getDistances` calls (future distances are "subsets" of past distances)
+  /** @type {MostCommonDenominator} */
+  let bestDenom = { denom: 0, avg: 0 };
   for(let shingleSize = shingleMin; shingleSize <= shingleMax; shingleSize++) {
     const distances = getDistances(ciphertext, shingleSize);
-    // let denom = mostCommonDenominator(distances)
-    // if(denom.sum > bestDenom.sum) bestDenom = denom
+    let denom = mostCommonDenominator(distances);
+    if(denom.avg > bestDenom.avg) bestDenom = denom;
   }
-  return [bestDenom.value];
+  return [bestDenom.denom];
 }
 
 export { getKeyLength, mostCommonDenominator, getDistances };

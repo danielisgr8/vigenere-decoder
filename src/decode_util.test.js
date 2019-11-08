@@ -1,15 +1,5 @@
-import { getDistances } from "./decode_util";
-import { shuffle } from "./util";
-
-const randomUniqueString = (size) => {
-  if(size <= 0 || size > 26) return "";
-  const charCodes = new Array(26);
-  for(let i = 0; i < 26; i++) {
-    charCodes[i] = i + 97;
-  }
-  shuffle(charCodes);
-  return String.fromCharCode(...(charCodes.slice(0, size)));
-}
+import { getDistances, mostCommonDenominator } from "./decode_util";
+import { randomUniqueString } from "./util";
 
 describe("getDistances", () => {
   test("repeated random unique strings", () => {
@@ -31,5 +21,74 @@ describe("getDistances", () => {
         */
       }
     }
+  });
+
+  test.todo("manual complicated string");
+});
+
+describe("mostCommonDenominator", () => {
+  const runTest = (distances, expectedDenom, expectedAvg) => {
+    const output = mostCommonDenominator(distances);
+    expect(output.denom).toBe(expectedDenom);
+    expect(output.avg).toBe(expectedAvg);
+  }
+
+  test("single distance", () => {
+    const distances = {
+      7: 5
+    };
+
+    runTest(distances, 7, 5);
+  });
+
+  test("basic multiple distances", () => {
+    const distances = {
+      2: 100,
+      4: 2,
+      6: 3,
+      8: 4
+    };
+
+    runTest(distances, 2, (100 + 2 + 3 + 4) / 4);
+  });
+
+  test("basic multiple distances with prime", () => {
+    const distances = {
+      2: 100,
+      4: 2,
+      6: 3,
+      7: 1000,
+      8: 4
+    };
+
+    // case: prime expected to be most common
+    runTest(distances, 7, 1000);
+
+    // case: prime not expected to be most common
+    distances[2] = 10000;
+    runTest(distances, 2, (10000 + 2 + 3 + 4) / 4);
+  });
+
+  test("expected isn't highest summed denominator", () => {
+    const distances = {
+      2: 1,
+      4: 1000,
+      6: 3,
+      7: 10,
+      8: 4
+    };
+
+    runTest(distances, 4, (1000 + 4) / 2);
+  });
+
+  test("only primes", () => {
+    const distances = {
+      2: 10,
+      3: 100,
+      5: 1000,
+      65537: 10000
+    };
+
+    runTest(distances, 65537, 10000);
   });
 });
