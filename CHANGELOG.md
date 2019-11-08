@@ -4,6 +4,20 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.3.0] - 2019-11-08
+### Source
+#### Added
+- Implemented `mostCommonDenominator` in `decode_util.js`
+  - Added tests
+- Added `randomString` to `util.js`
+- Encoding
+  - Added function `encode` to new file `encode.js`
+  - Added tests
+
+#### Changed
+- Moved all custom types to `types.js`
+- Moved `randomUniqueString` from `decode_util.js` to `util.js`
+
 ## [0.2.0] - 2019-11-06
 ### General
 #### Added
@@ -11,7 +25,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - ESLint: `.eslintrc.js` and the `eslint` npm package
 
 ### Source
-#### Changes
+#### Changed
 - Moved many functions in `index.js` to `decode_util.js` for better separation of concerns
 - `decode` improvements
   - `getKeyLength` functions started, namely `getDistances`
