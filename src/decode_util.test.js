@@ -1,15 +1,5 @@
 import { getDistances, mostCommonDenominator } from "./decode_util";
-import { shuffle } from "./util";
-
-const randomUniqueString = (size) => {
-  if(size <= 0 || size > 26) return "";
-  const charCodes = new Array(26);
-  for(let i = 0; i < 26; i++) {
-    charCodes[i] = i + 97;
-  }
-  shuffle(charCodes);
-  return String.fromCharCode(...(charCodes.slice(0, size)));
-}
+import { randomUniqueString } from "./util";
 
 describe("getDistances", () => {
   test("repeated random unique strings", () => {

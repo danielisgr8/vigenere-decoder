@@ -15,4 +15,31 @@ const shuffle = (arr) => {
   }
 }
 
-export { shuffle };
+/**
+ * Returns a random alphabetic, lower-case string
+ * @param {number} size Size of the string
+ */
+const randomString = (size) => {
+  const charCodes = new Array(size);
+  for(let i = 0; i < size; i++) {
+    charCodes[i] = randInt(0, 26) + 97;
+  }
+  return String.fromCharCode(...charCodes);
+}
+
+/**
+ * Returns a random unique, alphabetic, lower-case string.
+ * @param {number} size Size of the string. Must be <= 26.
+ * @returns {string}
+ */
+const randomUniqueString = (size) => {
+  if(size <= 0 || size > 26) return "";
+  const charCodes = new Array(26);
+  for(let i = 0; i < 26; i++) {
+    charCodes[i] = i + 97;
+  }
+  shuffle(charCodes);
+  return String.fromCharCode(...(charCodes.slice(0, size)));
+}
+
+export { shuffle, randomString, randomUniqueString };
