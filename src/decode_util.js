@@ -250,4 +250,4 @@ const getLikelyKeys = (ciphertext, keyLength, threshold) => {
 const formatCiphertext = (ciphertext) =>
   ciphertext.toUpperCase().split("").filter((char) => "A" >= char && char <= "Z").join("");
 
-export { getKeyLength, mostCommonDenominator, getDistances, formatCiphertext };
+export { getKeyLength, mostCommonDenominator, getDistances, formatCiphertext, getLetterFrequencies };
