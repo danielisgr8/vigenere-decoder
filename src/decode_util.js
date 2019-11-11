@@ -124,7 +124,7 @@ const mostCommonDenominator = (distances) => {
  * Attempts to automatically get the key length of the Vigenère configuration from the ciphertext.
  * Currently, returns an array with a single element: the most likely key size.
  * In the future, it may return multiple items.
- * @param {string} ciphertext 
+ * @param {string} ciphertext A ciphertext string of only alphabetic characters
  * @param {number} shingleMin 
  * @param {string} shingleMax 
  * @returns {Array[number]} An array of likely key sizes
@@ -142,4 +142,12 @@ const getKeyLength = (ciphertext, shingleMin, shingleMax) => {
   return [bestDenom.denom];
 }
 
-export { getKeyLength, mostCommonDenominator, getDistances };
+/**
+ * Formats the ciphertext to be used with the rest of the decoding helper functions.
+ * @param {string} ciphertext 
+ * @returns {string}
+ */
+const formatCiphertext = (ciphertext) =>
+  ciphertext.toUpperCase().split("").filter((char) => "A" >= char && char <= "Z").join("");
+
+export { getKeyLength, mostCommonDenominator, getDistances, formatCiphertext };
