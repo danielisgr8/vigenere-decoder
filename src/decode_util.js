@@ -69,7 +69,8 @@ const getDistances = (text, shingleSize) => {
  * @returns {MostCommonDenominator} The most common denominator (weighted)
  */
 const mostCommonDenominator = (distances) => {
-  const sortedKeys = Object.keys(distances).sort();
+  // keys must be converted to numbers before being sorted because keys are always strings
+  const sortedKeys = Object.keys(distances).map((key) => Number(key)).sort((a, b) => a - b);
   // maps keys from `sortedKeys` to an object storing the current sum of occurrences from multiples (sum)
   //  and how many multiples have been encountered (count)
   const values = {};
