@@ -1,5 +1,6 @@
-import { getDistances, mostCommonDenominator } from "./decode_util";
-import { randomUniqueString } from "./util";
+import { getDistances, mostCommonDenominator, getKeyLength, getLetterFrequencies } from "./decode_util";
+import { randomString, randomUniqueString } from "./util";
+import encode from "./encode";
 
 describe("getDistances", () => {
   test("repeated random unique strings", () => {
@@ -91,4 +92,20 @@ describe("mostCommonDenominator", () => {
 
     runTest(distances, 65537, 10000);
   });
+});
+
+describe("getLetterFrequencies", () => {
+  test("simple", () => {
+    const str = "abaaaaabaaaabaaabbaa";
+    const frequencies = getLetterFrequencies(str);
+    expect(frequencies['A']).toBe(75);
+    expect(frequencies['B']).toBe(25);
+    for(let i = 67; i <= 90; i++) {
+      expect(frequencies[String.fromCharCode(i)]).toBe(0);
+    }
+  });
+});
+
+describe("getLikelyKeys", () => {
+
 });
