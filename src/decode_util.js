@@ -4,6 +4,6 @@
  * @returns {string}
  */
 const formatCiphertext = (ciphertext) =>
-  ciphertext.toUpperCase().split("").filter((char) => "A" >= char && char <= "Z").join("");
+  ciphertext.toUpperCase().split("").filter((char) => "A" <= char && char <= "Z").join("");
 
 export { formatCiphertext };
