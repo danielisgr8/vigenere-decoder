@@ -45,7 +45,7 @@ const getLetterFrequencies = (str) => {
  * @param {number} keyLength 
  * @param {number} threshold The amount a shift's frequency can differ from standard English frequency and still be a likely shift
  */
-const getLikelyKeys = (ciphertext, keyLength, threshold) => {
+const getLikelyKeys = (ciphertext, keyLength, threshold = 75) => {
   const englishFrequencies = {
     'E': 12.02,
     'T':  9.1 ,
@@ -90,12 +90,14 @@ const getLikelyKeys = (ciphertext, keyLength, threshold) => {
       for(let charCode = 0; charCode < 26; charCode++) {
         const originalChar = String.fromCharCode(65 + charCode);
         const mappedChar = String.fromCharCode(65 + ((charCode + shift) % 26));
-        diffSum += Math.abs(strFrequencies[originalChar] - englishFrequencies[mappedChar]);
+        diffSum += Math.abs(englishFrequencies[originalChar] - strFrequencies[mappedChar]);
       }
 
       if(diffSum <= threshold) possibleShifts[keyI].push(shift);
     }
   }
+
+  return possibleShifts;
 }
 
-export { getLetterFrequencies };
+export { getLetterFrequencies, getLikelyKeys, everyIthChar };
