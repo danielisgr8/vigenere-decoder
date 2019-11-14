@@ -73,58 +73,34 @@ const getDistances = (text, shingleSize) => {
 const mostCommonDenominator = (distances) => {
   // keys must be converted to numbers before being sorted because keys are always strings
   const sortedKeys = Object.keys(distances).map((key) => Number(key)).sort((a, b) => a - b);
-  // maps keys from `sortedKeys` to an object storing the current sum of occurrences from multiples (sum)
-  //  and how many multiples have been encountered (count)
-  const values = {};
 
-  for(let currentIndex = sortedKeys.length - 1; currentIndex >= 0; currentIndex--) {
-    const current = sortedKeys[currentIndex];
+  // TODO: potentially track top k denominators and return all of them
+  const maxKey = sortedKeys[sortedKeys.length - 1];
+  const bestDenom = { denom: 0, avg: 0 };
+  for(let i = 1; i <= maxKey; i++) {
+    let multipleCount = 0;
+    let geqCount = 0;
+    const baseAvg = sortedKeys.reduce((accumulator, currentKey) => {
+      if(currentKey < i) return accumulator;
+      geqCount++;
+      if(currentKey % i !== 0) return accumulator;
+      multipleCount++;
+      return accumulator + distances[currentKey];
+    }, 0);
+    //const avg = (0.5 + Math.log10(i)) * baseAvg;
+    const lowNumberPenalty = 1.5 * (1.25 - 1 / i); // could try i^2
+    const flukePenalty = multipleCount / geqCount;
+    const avg = lowNumberPenalty * flukePenalty * baseAvg;
 
-    if(!values[current]) values[current] = { sum: 0, count: 0 };
-    values[current].sum += distances[current];
-    values[current].count++;
+    //if(i === 7 || i === 644) console.log(`${i}: ${baseAvg} -> ${avg}`);
 
-    /*
-      Attempt to find the largest denominator of `current`.
-      If found, update its sum and count.
-
-      By only finding the largest denominator, sums will "avalanche" down.
-      For a given `current`, `values[current].sum` at this point will always be
-        the sum of it and all its multiples' frequencies.
-      Therefore, the sum of frequencies of the largest denominator of `current` is simply
-        `values[current].sum` plus the largest denominator's frequency (which is added at the
-        beginning of its iteration of the for loop).
-    */
-    for(let nextIndex = currentIndex - 1; nextIndex >= 0; nextIndex--) {
-      const next = sortedKeys[nextIndex];
-
-      if(current % next === 0) {
-        if(!values[next]) values[next] = { sum: 0, count: 0 };
-        values[next].sum += values[current].sum;
-        values[next].count += values[current].count;
-
-        break;
-      }
-    }
+    if(avg > bestDenom.avg) {
+      bestDenom.denom = i;
+      bestDenom.avg = avg;
   }
-
-  // now find the best weighted denominator, where a weighted denominator is
-  //  its `sum` divided by its `count`
-  const bestWeighted = { denom: 0, avg: 0 }
-  sortedKeys.forEach((key) => {
-    const avg = values[key].sum / values[key].count;
-    //console.log(`${key}: ${avg}`);
-    if(avg > bestWeighted.avg) {
-      bestWeighted.denom = Number(key);
-      bestWeighted.avg = avg;
     }
-    // go in ascending order (forEach)
-    // in bestWeighted, store denom and allMultipleAvg (but just name avg)
-    // store max based on allMultipleAvg
-    // higher number counts less? multiply by 1 - i / sortedKeys.length or 1 - key / maxKey
-  });
 
-  return bestWeighted;
+  return bestDenom;
 }
 
 /**
