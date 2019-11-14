@@ -28,7 +28,7 @@ describe("encode", () => {
     });
 
     test("plaintext has non-alphabetic characters", () => {
-        const ciphertext = encode("THE QUICK BROWN FOX JUMPED OVER THE LAZY DOG", "azbycx");
-        expect(ciphertext).toEqual("TGF OWFCJ CPQTN EPV LRMOFB QSEQ UFG IAYZ BQD");
+        const ciphertext = encode("THE%QUICK BROWN[FOX\tJUMPED OVER/THE LAZY DOG", "azbycx");
+        expect(ciphertext).toEqual("TGF%OWFCJ CPQTN[EPV\tLRMOFB QSEQ/UFG IAYZ BQD");
     });
 });
