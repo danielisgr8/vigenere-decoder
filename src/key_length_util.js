@@ -97,8 +97,8 @@ const mostCommonDenominator = (distances) => {
     if(avg > bestDenom.avg) {
       bestDenom.denom = i;
       bestDenom.avg = avg;
-  }
     }
+  }
 
   return bestDenom;
 }
@@ -112,18 +112,28 @@ const mostCommonDenominator = (distances) => {
  * @param {string} shingleMax 
  * @returns {Array[number]} An array of likely key sizes
  */
-const getKeyLength = (ciphertext, shingleMin, shingleMax) => {
-  // TODO: in the future, allow returning multiple possible key lengths
+const getKeyLength = (ciphertext, shingleMin = 2, shingleMax = 5) => {
+  // TODO: in the future, allow returning multiple possible key lengths (return all bests from shingleMin to shingleMax?)
   // TODO: use previous distances to help find matches in future `getDistances` calls (future distances are "subsets" of past distances)
   /** @type {MostCommonDenominator} */
-  let bestDenom = { denom: 0, avg: 0 };
+  const denomResults = {};
+  const bestDenom = { denom: -1, avg: 0 };
   for(let shingleSize = shingleMin; shingleSize <= shingleMax; shingleSize++) {
     //console.log(`Shingle length: ${shingleSize}`);
     const distances = getDistances(ciphertext, shingleSize);
-    let denom = mostCommonDenominator(distances);
-    if(denom.avg > bestDenom.avg) bestDenom = denom;
+    const denom = mostCommonDenominator(distances);
+    if(!denomResults[denom.denom]) denomResults[denom.denom] = 0;
+    denomResults[denom.denom] += denom.avg;
   }
+  //console.log(denomResults);
+  Object.keys(denomResults).forEach((key) => {
+    if(denomResults[key] > bestDenom.avg) {
+      bestDenom.denom = Number(key);
+      bestDenom.avg = denomResults[key];
+    }
+  });
   return [bestDenom.denom];
+  // TODO: could return all results returned by each mostCommonDenominator call
 }
 
 export { getKeyLength, mostCommonDenominator, getDistances };
