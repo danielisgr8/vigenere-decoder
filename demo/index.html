@@ -1,10 +1,50 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <title>Vigen&egrave;re decoder</title>
-    </head>
-    <body>
-        <h1>Vigen&egrave;re Cipher Decoder</h1>
-        <script type="module" src="./main.mjs"></script>
-    </body>
+  <head>
+    <title>Vigen&egrave;re decoder</title>
+    <link href="./stylesheet.css" rel="stylesheet" />
+  </head>
+  <body>
+    <div class="body-container">
+      <div class="left">
+        <h1>Vigen&egrave;re Cipher Decoder/Enocder</h1>
+        <form>
+          <div>
+            <label>Type:</label>
+            <div>
+              <input type="radio" id="decode" name="cipher_direction" checked>
+              <label for="decode">Decode</label>
+            </div>
+            <div>
+              <input type="radio" id="encode" name="cipher_direction">
+              <label for="encode">Encode</label>
+            </div>
+          </div>
+
+          <div>
+            <label for="cipher_input">Input:</label>
+            <textarea id="cipher_input" name="cipher_input"></textarea>
+          </div>
+
+          <div>
+            <label for="cipher_key">Key:</label>
+            <input type="text" id="cipher_key" name="cipher_key">
+          </div>
+
+          <div>
+            <input type="checkbox" id="cipher_step" name="cipher_step">
+            <label for="cipher_step">Step-by-step</label>
+          </div>
+
+          <div>
+            <input type="submit">
+          </div>
+        </form>
+      </div>
+      <div class="right">
+        <p>Hi?</p>
+      </div>
+    </div>
+    <script type="module" src="./main.mjs"></script>
+  </body>
 </html>
