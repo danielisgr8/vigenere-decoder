@@ -59,24 +59,20 @@ const getDistances = (text, shingleSize) => {
 }
 
 /**
- * Finds the most common denominator, which is defined below:
- * 
- *  For some number `n`, let `A_n` be all multiples of `n` in `distances`.
- *  Let `s_n` be the sum of `distances[a]` for all `a` in `A_n`.
- *  Let `average_n` be `s_n / |A_n|`.
- * 
- *  Let the most common denominator be the maximum value in `{ average_n | n` is a key of `distances }`
+ * Finds the best weighted denominators.
+ * This includes the best denominator and denominators whose scores
+ *  differ by less than 25 percent of the best's score.
  * 
  * @param {object} distances Hash table of distance frequencies, as returned in `getDistances`
- * @returns {MostCommonDenominator} The most common denominator (weighted)
+ * @returns {Array<MostCommonDenominator>} The most likely denominators
  */
 const mostCommonDenominator = (distances) => {
   // keys must be converted to numbers before being sorted because keys are always strings
   const sortedKeys = Object.keys(distances).map((key) => Number(key)).sort((a, b) => a - b);
 
-  // TODO: potentially track top k denominators and return all of them
   const maxKey = sortedKeys[sortedKeys.length - 1];
   const bestDenom = { denom: 0, avg: 0 };
+  const denoms = {};
   for(let i = 1; i <= maxKey; i++) {
     let multipleCount = 0;
     let geqCount = 0;
@@ -87,12 +83,11 @@ const mostCommonDenominator = (distances) => {
       multipleCount++;
       return accumulator + distances[currentKey];
     }, 0);
-    //const avg = (0.5 + Math.log10(i)) * baseAvg;
-    const lowNumberPenalty = 1.5 * (1.25 - 1 / i); // could try i^2
+    const lowNumberPenalty = 4.5 - 4 / Math.pow(i, 1 / 2);
     const flukePenalty = multipleCount / geqCount;
-    const avg = lowNumberPenalty * flukePenalty * baseAvg;
+    const avg = (0.7 * lowNumberPenalty + 0.3 * flukePenalty) * baseAvg;
 
-    //if(i === 7 || i === 644) console.log(`${i}: ${baseAvg} -> ${avg}`);
+    denoms[i] = avg;
 
     if(avg > bestDenom.avg) {
       bestDenom.denom = i;
@@ -100,7 +95,15 @@ const mostCommonDenominator = (distances) => {
     }
   }
 
-  return bestDenom;
+  const likelyDenoms = [bestDenom];
+  const avgMin = bestDenom.avg * 0.75;
+  for(let i = 1; i <= maxKey; i++) {
+    if(denoms[i] >= avgMin) {
+      likelyDenoms.push({ denom: i, avg: denoms[i] });
+    }
+  }
+
+  return likelyDenoms;
 }
 
 /**
@@ -108,7 +111,7 @@ const mostCommonDenominator = (distances) => {
  * 
  * Returns an array of likely key sizes. Each key size is a given a likelihood score.
  * A likely key is the size with the highest score as well as any sizes that differ
- *  from the most likely score by less than 50 percent.
+ *  from the most likely score by less than 75 percent.
  * @param {string} ciphertext A ciphertext string of only alphabetic characters
  * @param {number} shingleMin 
  * @param {string} shingleMax 
@@ -122,11 +125,14 @@ const getKeyLength = (ciphertext, shingleMin = 2, shingleMax = 5) => {
   for(let shingleSize = shingleMin; shingleSize <= shingleMax; shingleSize++) {
     //console.log(`Shingle length: ${shingleSize}`);
     const distances = getDistances(ciphertext, shingleSize);
-    const denom = mostCommonDenominator(distances);
-    if(!denomResults[denom.denom]) denomResults[denom.denom] = 0;
-    denomResults[denom.denom] += denom.avg;
+    const denoms = mostCommonDenominator(distances);
+    for(let i = 0; i < denoms.length; i++) {
+      const denom = denoms[i];
+      if(!denomResults[denom.denom]) denomResults[denom.denom] = 0;
+      denomResults[denom.denom] += denom.avg;
+    }
   }
-  // console.log(denomResults);
+  //console.log(denomResults);
 
   // find best key
   Object.keys(denomResults).forEach((key) => {
@@ -136,9 +142,9 @@ const getKeyLength = (ciphertext, shingleMin = 2, shingleMax = 5) => {
     }
   });
 
-  // find keys less than 50 percent different
+  // find keys less than 75 percent different
   const res = [bestDenom];
-  const avgMin = bestDenom.avg * 0.5;
+  const avgMin = bestDenom.avg * 0.75;
   Object.keys(denomResults).forEach((key) => {
     if(Number(key) !== res[0].denom && denomResults[key] >= avgMin) {
       res.push({ denom: Number(key), avg: denomResults[key] });
