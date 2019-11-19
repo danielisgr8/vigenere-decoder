@@ -105,15 +105,16 @@ const mostCommonDenominator = (distances) => {
 
 /**
  * Attempts to automatically get the key length of the Vigenère configuration from the ciphertext.
- * Currently, returns an array with a single element: the most likely key size.
- * In the future, it may return multiple items.
+ * 
+ * Returns an array of likely key sizes. Each key size is a given a likelihood score.
+ * A likely key is the size with the highest score as well as any sizes that differ
+ *  from the most likely score by less than 50 percent.
  * @param {string} ciphertext A ciphertext string of only alphabetic characters
  * @param {number} shingleMin 
  * @param {string} shingleMax 
  * @returns {Array[number]} An array of likely key sizes
  */
 const getKeyLength = (ciphertext, shingleMin = 2, shingleMax = 5) => {
-  // TODO: in the future, allow returning multiple possible key lengths (return all bests from shingleMin to shingleMax?)
   // TODO: use previous distances to help find matches in future `getDistances` calls (future distances are "subsets" of past distances)
   /** @type {MostCommonDenominator} */
   const denomResults = {};
@@ -125,15 +126,25 @@ const getKeyLength = (ciphertext, shingleMin = 2, shingleMax = 5) => {
     if(!denomResults[denom.denom]) denomResults[denom.denom] = 0;
     denomResults[denom.denom] += denom.avg;
   }
-  //console.log(denomResults);
+  // console.log(denomResults);
+
+  // find best key
   Object.keys(denomResults).forEach((key) => {
     if(denomResults[key] > bestDenom.avg) {
       bestDenom.denom = Number(key);
       bestDenom.avg = denomResults[key];
     }
   });
-  return [bestDenom.denom];
-  // TODO: could return all results returned by each mostCommonDenominator call
+
+  // find keys less than 50 percent different
+  const res = [bestDenom];
+  const avgMin = bestDenom.avg * 0.5;
+  Object.keys(denomResults).forEach((key) => {
+    if(denomResults[key].denom !== res[0].denom && denomResults[key].avg >= avgMin) {
+      res.push(denomResults[key]);
+    }
+  });
+  return res.map((denom) => denom.denom);
 }
 
 export { getKeyLength, mostCommonDenominator, getDistances };
