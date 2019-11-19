@@ -1,6 +1,6 @@
 import { getLetterFrequencies, getLikelyKeys, everyIthChar } from "./key_util";
-import { formatCiphertext } from "./decode_util";
-import encode from "./encode";
+import { formatCiphertext } from "../util";
+import encode from "../encode";
 
 describe("everyIthChar", () => {
   test("simple", () => {

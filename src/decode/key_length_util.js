@@ -1,5 +1,5 @@
-import PolynomialHash from "./PolynomialHash";
-import "./types";
+import PolynomialHash from "../PolynomialHash";
+import "../types";
 
 const rollingHash = new PolynomialHash();
  
@@ -140,8 +140,8 @@ const getKeyLength = (ciphertext, shingleMin = 2, shingleMax = 5) => {
   const res = [bestDenom];
   const avgMin = bestDenom.avg * 0.5;
   Object.keys(denomResults).forEach((key) => {
-    if(denomResults[key].denom !== res[0].denom && denomResults[key].avg >= avgMin) {
-      res.push(denomResults[key]);
+    if(Number(key) !== res[0].denom && denomResults[key] >= avgMin) {
+      res.push({ denom: Number(key), avg: denomResults[key] });
     }
   });
   return res.map((denom) => denom.denom);

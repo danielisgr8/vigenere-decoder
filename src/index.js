@@ -1,5 +1,5 @@
-import { formatCiphertext } from "./decode_util";
-import { getKeyLength } from "./key_length_util";
+import { formatCiphertext } from "./util";
+import { getKeyLength } from "./decode";
 import "./types";
 
 /**

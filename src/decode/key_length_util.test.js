@@ -1,7 +1,7 @@
 import { getDistances, mostCommonDenominator, getKeyLength } from "./key_length_util";
-import { formatCiphertext } from "./decode_util";
-import { randomString, randomUniqueString } from "./util";
-import encode from "./encode";
+import { formatCiphertext } from "../util";
+import { randomString, randomUniqueString } from "../util";
+import encode from "../encode";
 
 describe("getDistances", () => {
   test("repeated random unique strings", () => {
@@ -103,6 +103,7 @@ describe("getKeyLength", () => {
       ciphertext = formatCiphertext(ciphertext);
       console.log("key length: " + i);
       const denoms = getKeyLength(ciphertext, 2, 6);
+      console.log(denoms);
       // correct denom should be included
       expect(denoms.includes(key.length)).toBe(true);
       // don't want too many false-positives

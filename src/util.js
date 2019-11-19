@@ -42,4 +42,12 @@ const randomUniqueString = (size) => {
   return String.fromCharCode(...(charCodes.slice(0, size)));
 }
 
-export { shuffle, randomString, randomUniqueString };
+/**
+ * Formats the ciphertext to be used with the rest of the decoding helper functions.
+ * @param {string} ciphertext 
+ * @returns {string}
+ */
+const formatCiphertext = (ciphertext) =>
+  ciphertext.toUpperCase().split("").filter((char) => "A" <= char && char <= "Z").join("");
+
+export { shuffle, randomString, randomUniqueString, formatCiphertext };
