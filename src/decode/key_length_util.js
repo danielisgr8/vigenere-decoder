@@ -1,4 +1,4 @@
-import PolynomialHash from "../PolynomialHash";
+import PolynomialHash from "./PolynomialHash";
 import "../types";
 
 const rollingHash = new PolynomialHash();
