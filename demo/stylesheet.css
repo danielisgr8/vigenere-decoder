@@ -1,0 +1,17 @@
+.body-container {
+  display: flex;
+}
+
+.left {
+  border-right: 1px solid black;
+  margin-right: 0.2rem;
+  width: 40%;
+}
+
+#cipher_input, #cipher_key {
+  display: block;
+}
+
+.right {
+  width: 60%;
+}
