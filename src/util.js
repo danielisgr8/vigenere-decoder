@@ -43,11 +43,48 @@ const randomUniqueString = (size) => {
 }
 
 /**
- * Formats the ciphertext to be used with the rest of the decoding helper functions.
+ * Formats the ciphertext to be used when decoding.
  * @param {string} ciphertext 
  * @returns {string}
  */
 const formatCiphertext = (ciphertext) =>
   ciphertext.toUpperCase().split("").filter((char) => "A" <= char && char <= "Z").join("");
 
-export { shuffle, randomString, randomUniqueString, formatCiphertext };
+/**
+ * Converts "simple" letter codes to characters in place.
+ * "Simple" codes are A -> 0, B -> 1, ..., Z -> 25.
+ */
+const simpleCodesToChars = (arr) =>
+  arr.map((code) => String.fromCharCode(65 + code));
+
+/**
+ * Get all permutations of strings from `keyChars`.
+ * The i-th element of `keyChars` is an array of possible characters
+ *  at the i-th index of a string.
+ * @param {Array<Array<String>>} keyChars 
+ * @returns {Array<String>}
+ */
+const getKeyPermutations = (keyChars) => {
+  return keyPermutationsHelper(keyChars, 0);
+};
+
+/**
+ * @param {Array<Array<String>>} keyChars 
+ * @param {number} index Current index of `keyChars` this call is starting at
+ * @returns {Array<String>}
+ */
+const keyPermutationsHelper = (keyChars, index) => {
+  if(index === keyChars.length - 1) return keyChars[index];
+
+  const keys = [];
+  const subPermutations = keyPermutationsHelper(keyChars, index + 1);
+  for(let i = 0; i < keyChars[index].length; i++) {
+    const beginningChar = keyChars[index][i];
+    for(let j = 0; j < subPermutations.length; j++) {
+      keys.push(beginningChar + subPermutations[j]);
+    }
+  }
+  return keys;
+};
+
+export { shuffle, randomString, randomUniqueString, formatCiphertext, simpleCodesToChars, getKeyPermutations };

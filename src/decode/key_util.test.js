@@ -1,5 +1,5 @@
 import { getLetterFrequencies, getLikelyKeys, everyIthChar } from "./key_util";
-import { formatCiphertext } from "../util";
+import { formatCiphertext, simpleCodesToChars, getKeyPermutations } from "../util";
 import encode from "../encode";
 
 describe("everyIthChar", () => {
@@ -28,7 +28,12 @@ describe("getLetterFrequencies", () => {
 describe("getLikelyKeys", () => {
   test("lab 2 ciphertext", () => {
     const ciphertext = "MSKTEBJVWTMABZLFJOUCMYQNOVTEJQGXLRARVZNWHJDTUXEUSECNZMYDXSCNIGARCZODRYZHZNQFXPSROVTLSOZZQZWDXAYBUGWROTOZWOCCTQYDSWZZPRUPWROVTGCSRYMVDWHKGZHHEVOYBBOYBUCQTGEHGICGDZCYKNBGEZUUARCTQQUNSLSSYAVQSJGNUMFHWSGYMYGFWYKXHDWAKUNSGQAEQVRWDXGISTWEPGISPGXSUTJRXZFKCMPJLQQRWFWJCAXJYMPGKBMEQMCJEKHLQCUZTBGDSEUCEWAZGEQAYDCIUWYGMSEOVTWGSXEZHDPRKKXJSJRUCVVFJCAXPRSCHEUCEWMIXTQAYJSGXVVFRTUXBUWDCSKABEPPUJGGGESRRGBMEVGZTVXPOOTBCSDGOTOLGFPEOUGJJWTMBBLPZREWHAEKORTVXJCAJWALPJKTBEQJCARTTWEPEONLGFRUTTLUFHRUWFWQCUZTBGDSQOKXGQTZNMFMYRGEAUGPGUUPJZPSSGZVWDVGQMVLDVGQMVLQCXSMJZZONSQYGNCSKWAUZAKUVYWEGMUTBKPMUAZODFSYKDRJJPUJGPMETUUBYGZGKEWHYZHZUBHJYAKGZBMYRGTLCMEMUAZSWPHUTBUWRFUAVQYZHZGBNCPHNKPBDOCLGTYAXHAXVVFRZUUARXZCZRWBKPYOISBXQHNKAHFOOEYPBWDDRKIFWWCAOARHFZRSMBXQCLSGXFPSYPIPCRSZHIPCNCSKWATPTUXMJWNFGISYGDSEUCETWIKYMIWCMHULLUFHLUWGDZCYKNBGEZUUARCTQQUNSLSSYAVQSJGNUMFHWSGYMYGFWYKXHDWAKUNSGQAEQVRWDXGISTWEPGISPGXSUTJRXZFKCMPJLQQRWFWJCAXJYMPGKBMEQMCJEKHLPJKXGOGOMIABRNPFEHWQQNIZKDRJJPUJGPMESBKZLTZREICGWGSXEJBVJQAZMIWCMHULLWGSXEJBVJQAZNBGEZUUAR";
-    console.log(getLikelyKeys(ciphertext, 7, 75));
+    
+    const keyCodes = getLikelyKeys(ciphertext, 7);
+    const keyChars = keyCodes.map((ithCodes) => simpleCodesToChars(ithCodes));
+    const keyPermutations = getKeyPermutations(keyChars);
+
+    expect(keyPermutations.includes("LOGGINS")).toBe(true);
   });
 
   test("manual test", () => {
@@ -36,6 +41,10 @@ describe("getLikelyKeys", () => {
     const key = "orange";
     let ciphertext = encode(plaintext, key);
     ciphertext = formatCiphertext(ciphertext);
-    console.log(getLikelyKeys(ciphertext, key.length));
+    const keyCodes = getLikelyKeys(ciphertext, key.length);
+    const keyChars = keyCodes.map((ithCodes) => simpleCodesToChars(ithCodes));
+    const keyPermutations = getKeyPermutations(keyChars);
+    
+    expect(keyPermutations.includes("ORANGE")).toBe(true);
   });
 });
