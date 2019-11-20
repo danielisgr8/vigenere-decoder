@@ -10,9 +10,13 @@
     "babel-jest": "^24.9.0",
     "eslint": "^6.6.0",
     "eslint-plugin-jest": "^23.0.2",
-    "jest": "^24.9.0"
+    "jest": "^24.9.0",
+    "webpack": "^4.41.2",
+    "webpack-cli": "^3.3.10"
   },
   "scripts": {
+    "build": "webpack ./demo/src/index.js -o ./demo/main.js --devtool sourcemap",
+    "build-watch": "webpack ./demo/src/index.js -o ./demo/main.js --devtool sourcemap --watch",
     "test": "jest"
   },
   "repository": {

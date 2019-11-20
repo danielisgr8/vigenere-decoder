@@ -12,11 +12,11 @@
           <div>
             <label>Type:</label>
             <div>
-              <input type="radio" id="decode" name="cipher_direction" checked>
+              <input type="radio" id="decode" value="decode" name="cipher_direction" checked>
               <label for="decode">Decode</label>
             </div>
             <div>
-              <input type="radio" id="encode" name="cipher_direction">
+              <input type="radio" id="encode" value="encode" name="cipher_direction">
               <label for="encode">Encode</label>
             </div>
           </div>
@@ -42,9 +42,10 @@
         </form>
       </div>
       <div class="right">
-        <p>Hi?</p>
+        <h2 id="details_title">Title</h2>
+        <textarea id="details_body" readonly></textarea>
       </div>
     </div>
-    <script type="module" src="./main.mjs"></script>
+    <script src="./main.js"></script>
   </body>
 </html>
