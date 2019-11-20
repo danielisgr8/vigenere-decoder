@@ -51,7 +51,8 @@ const formatCiphertext = (ciphertext) =>
   ciphertext.toUpperCase().split("").filter((char) => "A" <= char && char <= "Z").join("");
 
 /**
- * Converts "simple" letter codes to characters in place.
+ * Converts "simple" letter codes to characters.
+ * Returns a new array with this conversion.
  * "Simple" codes are A -> 0, B -> 1, ..., Z -> 25.
  */
 const simpleCodesToChars = (arr) =>

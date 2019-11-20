@@ -103,7 +103,9 @@ const mostCommonDenominator = (distances) => {
     }
   }
 
-  return likelyDenoms;
+  const left = likelyDenoms.length / 2 - 2;
+  const right = likelyDenoms.length / 2 + 3;
+  return likelyDenoms.slice(left, right);
 }
 
 /**
@@ -117,7 +119,7 @@ const mostCommonDenominator = (distances) => {
  * @param {string} shingleMax 
  * @returns {Array[number]} An array of likely key sizes
  */
-const getKeyLength = (ciphertext, shingleMin = 2, shingleMax = 5) => {
+const getKeyLengths = (ciphertext, shingleMin = 2, shingleMax = 5) => {
   // TODO: use previous distances to help find matches in future `getDistances` calls (future distances are "subsets" of past distances)
   /** @type {MostCommonDenominator} */
   const denomResults = {};
@@ -153,4 +155,4 @@ const getKeyLength = (ciphertext, shingleMin = 2, shingleMax = 5) => {
   return res.map((denom) => denom.denom);
 }
 
-export { getKeyLength, mostCommonDenominator, getDistances };
+export { getKeyLengths, mostCommonDenominator, getDistances };

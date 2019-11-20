@@ -1,4 +1,4 @@
-import { getDistances, mostCommonDenominator, getKeyLength } from "./key_length_util";
+import { getDistances, mostCommonDenominator, getKeyLengths } from "./key_length_util";
 import { formatCiphertext } from "../util";
 import { randomString, randomUniqueString } from "../util";
 import encode from "../encode";
@@ -94,15 +94,15 @@ describe("mostCommonDenominator", () => {
   });
 });
 
-describe("getKeyLength", () => {
-  const randKeyTest = (plaintext, min = 1, max = 15) => {
+describe("getKeyLengths", () => {
+  const randKeyTest = (plaintext, min = 1, max = 16) => {
     for(let i = min; i < max; i++) {
       const key = randomString(i);
       let ciphertext = encode(plaintext, key);
       ciphertext = formatCiphertext(ciphertext);
       //console.log("key length: " + i);
-      const denoms = getKeyLength(ciphertext, 2, 6);
       //console.log(denoms);
+      const denoms = getKeyLengths(ciphertext, 2, 6);
       // correct denom should be included
       expect(denoms.includes(key.length)).toBe(true);
       // don't want too many false-positives
@@ -112,7 +112,7 @@ describe("getKeyLength", () => {
 
   test("lab 2 ciphertext", () => {
     const ciphertext = "MSKTEBJVWTMABZLFJOUCMYQNOVTEJQGXLRARVZNWHJDTUXEUSECNZMYDXSCNIGARCZODRYZHZNQFXPSROVTLSOZZQZWDXAYBUGWROTOZWOCCTQYDSWZZPRUPWROVTGCSRYMVDWHKGZHHEVOYBBOYBUCQTGEHGICGDZCYKNBGEZUUARCTQQUNSLSSYAVQSJGNUMFHWSGYMYGFWYKXHDWAKUNSGQAEQVRWDXGISTWEPGISPGXSUTJRXZFKCMPJLQQRWFWJCAXJYMPGKBMEQMCJEKHLQCUZTBGDSEUCEWAZGEQAYDCIUWYGMSEOVTWGSXEZHDPRKKXJSJRUCVVFJCAXPRSCHEUCEWMIXTQAYJSGXVVFRTUXBUWDCSKABEPPUJGGGESRRGBMEVGZTVXPOOTBCSDGOTOLGFPEOUGJJWTMBBLPZREWHAEKORTVXJCAJWALPJKTBEQJCARTTWEPEONLGFRUTTLUFHRUWFWQCUZTBGDSQOKXGQTZNMFMYRGEAUGPGUUPJZPSSGZVWDVGQMVLDVGQMVLQCXSMJZZONSQYGNCSKWAUZAKUVYWEGMUTBKPMUAZODFSYKDRJJPUJGPMETUUBYGZGKEWHYZHZUBHJYAKGZBMYRGTLCMEMUAZSWPHUTBUWRFUAVQYZHZGBNCPHNKPBDOCLGTYAXHAXVVFRZUUARXZCZRWBKPYOISBXQHNKAHFOOEYPBWDDRKIFWWCAOARHFZRSMBXQCLSGXFPSYPIPCRSZHIPCNCSKWATPTUXMJWNFGISYGDSEUCETWIKYMIWCMHULLUFHLUWGDZCYKNBGEZUUARCTQQUNSLSSYAVQSJGNUMFHWSGYMYGFWYKXHDWAKUNSGQAEQVRWDXGISTWEPGISPGXSUTJRXZFKCMPJLQQRWFWJCAXJYMPGKBMEQMCJEKHLPJKXGOGOMIABRNPFEHWQQNIZKDRJJPUJGPMESBKZLTZREICGWGSXEJBVJQAZMIWCMHULLWGSXEJBVJQAZNBGEZUUAR";
-    expect(getKeyLength(ciphertext)[0]).toBe(7);
+    expect(getKeyLengths(ciphertext)[0]).toBe(7);
   });
 
   test("It's Not The Same Anymore - Rex Orange County", () => {

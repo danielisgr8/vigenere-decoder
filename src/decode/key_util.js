@@ -45,7 +45,7 @@ const getLetterFrequencies = (str) => {
  * @param {number} keyLength 
  * @param {number} threshold The amount a shift's frequency can differ from standard English frequency and still be a likely shift
  */
-const getLikelyKeys = (ciphertext, keyLength, threshold = 75) => {
+const getLikelyKeys = (ciphertext, keyLength, threshold = 65) => {
   const englishFrequencies = {
     'E': 12.02,
     'T':  9.1 ,
