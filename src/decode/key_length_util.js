@@ -98,14 +98,12 @@ const mostCommonDenominator = (distances) => {
   const likelyDenoms = [bestDenom];
   const avgMin = bestDenom.avg * 0.75;
   for(let i = 1; i <= maxKey; i++) {
-    if(denoms[i] >= avgMin) {
+    if(i !== bestDenom.denom && denoms[i] >= avgMin) {
       likelyDenoms.push({ denom: i, avg: denoms[i] });
     }
   }
 
-  const left = likelyDenoms.length / 2 - 2;
-  const right = likelyDenoms.length / 2 + 3;
-  return likelyDenoms.slice(left, right);
+  return likelyDenoms;
 }
 
 /**
@@ -115,15 +113,17 @@ const mostCommonDenominator = (distances) => {
  * A likely key is the size with the highest score as well as any sizes that differ
  *  from the most likely score by less than 75 percent.
  * @param {string} ciphertext A ciphertext string of only alphabetic characters
+ * @param {Object} details An empty object to fill with step-by-step details
  * @param {number} shingleMin 
  * @param {string} shingleMax 
  * @returns {Array[number]} An array of likely key sizes
  */
-const getKeyLengths = (ciphertext, shingleMin = 2, shingleMax = 5) => {
+const getKeyLengths = (ciphertext, details = {}, shingleMin = 2, shingleMax = 5) => {
   // TODO: use previous distances to help find matches in future `getDistances` calls (future distances are "subsets" of past distances)
   /** @type {MostCommonDenominator} */
   const denomResults = {};
   const bestDenom = { denom: -1, avg: 0 };
+  details.shingles = [];
   for(let shingleSize = shingleMin; shingleSize <= shingleMax; shingleSize++) {
     //console.log(`Shingle length: ${shingleSize}`);
     const distances = getDistances(ciphertext, shingleSize);
@@ -133,7 +133,15 @@ const getKeyLengths = (ciphertext, shingleMin = 2, shingleMax = 5) => {
       if(!denomResults[denom.denom]) denomResults[denom.denom] = 0;
       denomResults[denom.denom] += denom.avg;
     }
+
+    const shingleDetails = {
+      size: shingleSize,
+      distances,
+      denoms
+    };
+    details.shingles.push(shingleDetails);
   }
+  details.denomSum = denomResults;
   //console.log(denomResults);
 
   // find best key
@@ -152,7 +160,9 @@ const getKeyLengths = (ciphertext, shingleMin = 2, shingleMax = 5) => {
       res.push({ denom: Number(key), avg: denomResults[key] });
     }
   });
-  return res.map((denom) => denom.denom);
+  const resDenoms = res.map((denom) => denom.denom);
+  details.keyLengths = resDenoms;
+  return resDenoms;
 }
 
 export { getKeyLengths, mostCommonDenominator, getDistances };

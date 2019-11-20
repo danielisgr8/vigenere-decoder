@@ -43,9 +43,10 @@ const getLetterFrequencies = (str) => {
  * Likeliness is calculated through letter frequency analysis.
  * @param {string} ciphertext Ciphertext containing only upper-case alphabetic characters
  * @param {number} keyLength 
+ * @param {Object} details An empty object to fill with step-by-step details
  * @param {number} threshold The amount a shift's frequency can differ from standard English frequency and still be a likely shift
  */
-const getLikelyKeys = (ciphertext, keyLength, threshold = 65) => {
+const getLikelyKeys = (ciphertext, keyLength, details = {}, threshold = 65) => {
   const englishFrequencies = {
     'E': 12.02,
     'T':  9.1 ,
@@ -80,10 +81,18 @@ const getLikelyKeys = (ciphertext, keyLength, threshold = 65) => {
     possibleShifts[i] = [];
   }
 
+  const groupDetails = [];
   for(let keyI = 0; keyI < keyLength; keyI++) {
     const str = everyIthChar(ciphertext, keyLength, keyI);
     const strFrequencies = getLetterFrequencies(str);
 
+    groupDetails[keyI] = {
+      i: keyI,
+      str,
+      frequencies: strFrequencies,
+      diffSums: {},
+      valid: []
+    }
     for(let shift = 0; shift < 26; shift++) {
       let diffSum = 0;
 
@@ -92,10 +101,18 @@ const getLikelyKeys = (ciphertext, keyLength, threshold = 65) => {
         const mappedChar = String.fromCharCode(65 + ((charCode + shift) % 26));
         diffSum += Math.abs(englishFrequencies[originalChar] - strFrequencies[mappedChar]);
       }
+      groupDetails[keyI].diffSums[shift] = diffSum;
 
-      if(diffSum <= threshold) possibleShifts[keyI].push(shift);
+      if(diffSum <= threshold) {
+        groupDetails[keyI].valid.push(shift);
+        possibleShifts[keyI].push(shift);
+      }
     }
   }
+
+  details.length = keyLength;
+  details.groups = groupDetails;
+  details.valid = possibleShifts;
 
   return possibleShifts;
 }

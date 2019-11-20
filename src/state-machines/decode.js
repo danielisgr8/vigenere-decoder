@@ -26,14 +26,14 @@
             4: 10,
             8: 6
           },
-          denominators: {
+          denoms: {
             1: 332,
             2: 868,
             13: 345
           }
         }
       ],
-      denominatorSum: {
+      denomSum: {
         1: 940,
         2: 1730,
         13: 800,
@@ -45,10 +45,14 @@
       lengths: [
         {
           length: 2,
-          shingles: [
+          groups: [
             {
               i: 1,
-              string: "asdf",
+              str: "asdf",
+			  frequencies: {
+				'A': 23,
+				'B': 2
+			  }
               diffSums: {
                 0: 20,
                 1: 40

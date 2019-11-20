@@ -102,7 +102,7 @@ describe("getKeyLengths", () => {
       ciphertext = formatCiphertext(ciphertext);
       //console.log("key length: " + i);
       //console.log(denoms);
-      const denoms = getKeyLengths(ciphertext, 2, 6);
+      const denoms = getKeyLengths(ciphertext);
       // correct denom should be included
       expect(denoms.includes(key.length)).toBe(true);
       // don't want too many false-positives
