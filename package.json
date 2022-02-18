@@ -1,6 +1,6 @@
 {
   "name": "vigenere-decoder",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "A Vigenère cipher decoder (and encoder) for Cpr E 331X",
   "main": "src/index.js",
   "devDependencies": {
