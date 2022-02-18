@@ -3,20 +3,19 @@
   "version": "0.3.0",
   "description": "A Vigenère cipher decoder (and encoder) for Cpr E 331X",
   "main": "src/index.js",
-  "dependencies": {},
   "devDependencies": {
-    "@babel/core": "^7.6.4",
-    "@babel/preset-env": "^7.6.3",
-    "babel-jest": "^24.9.0",
-    "eslint": "^6.6.0",
-    "eslint-plugin-jest": "^23.0.2",
-    "jest": "^24.9.0",
-    "webpack": "^4.41.2",
-    "webpack-cli": "^3.3.10"
+    "@babel/core": "^7.17.5",
+    "@babel/preset-env": "^7.16.11",
+    "babel-jest": "^27.5.1",
+    "eslint": "^8.9.0",
+    "eslint-plugin-jest": "^26.1.1",
+    "jest": "^27.5.1",
+    "webpack": "^5.69.1",
+    "webpack-cli": "^4.9.2"
   },
   "scripts": {
-    "build": "webpack ./demo/src/index.js -o ./demo/main.js --devtool sourcemap",
-    "build-watch": "webpack ./demo/src/index.js -o ./demo/main.js --devtool sourcemap --watch",
+    "build": "webpack --mode=development",
+    "build-watch": "webpack --mode=development --watch",
     "test": "jest"
   },
   "repository": {
